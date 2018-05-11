@@ -8,13 +8,14 @@
         <property name="dialect">dialect.SQLiteDialect</property>
         <property name="connection.driver_class">org.sqlite.JDBC</property>
         <property name="connection.url">jdbc:sqlite:server/db_storage.db</property>
-        <property name="connection.username"></property>
-        <property name="connection.password"></property>
+       <!--property name="connection.username">user1</property>
+        <property name="connection.password">12345</property-->
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
         <property name="hibernate.connection.autocommit">false</property>
 
-        <mapping class="logic.Student" />
+        <!--mapping class="logic.Student" />
+        <mapping resource="Employee.hbm.xml"/-->
 
     </session-factory>
 </hibernate-configuration>
