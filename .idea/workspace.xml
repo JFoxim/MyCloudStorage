@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2bc7a77c-e9b2-4591-bc36-03527532e215" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/server/pom.xml" afterPath="$PROJECT_DIR$/server/pom.xml" />
-      <change beforePath="$PROJECT_DIR$/server/server.iml" afterPath="$PROJECT_DIR$/server/server.iml" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/dao/impl/UserDBDao.java" afterPath="$PROJECT_DIR$/server/src/main/java/dao/impl/UserDBDao.java" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/models/User.java" afterPath="$PROJECT_DIR$/server/src/main/java/models/User.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -160,6 +158,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="ShangareevRR &lt;renanew@mail.ru&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GradleLocalSettings">
@@ -548,6 +551,14 @@
       <option name="presentableId" value="Default" />
       <updated>1525592746032</updated>
     </task>
+    <task id="LOCAL-00001" summary="+">
+      <created>1526349957843</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1526349957843</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -584,6 +595,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="+" />
+    <option name="LAST_COMMIT_MESSAGE" value="+" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
