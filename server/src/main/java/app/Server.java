@@ -1,23 +1,33 @@
 package app;
 
+import Services.FileService;
+import example.FilesThread;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class Server {
     private ServerSocket serverSocket;
-
+    List<File> files = new ArrayList<File>();
     private Vector<ClientHandler> clients;
 
     public Server() {
         try {
-            SQLHandler.connect();
-            serverSocket = new ServerSocket(8189);
+            //SQLHandler.connect();
+           File file = FileService.createGlobalDir();
+            serverSocket = new ServerSocket(9999);
             clients = new Vector<ClientHandler>();
             System.out.println("Сервер запущен");
             while (true) {
                 Socket socket = serverSocket.accept();
+                FilesThread thread = new FilesThread(socket,files);
+                Thread th = new Thread(thread);
+                th.start();
                 System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
             }

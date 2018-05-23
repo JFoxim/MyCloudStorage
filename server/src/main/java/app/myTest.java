@@ -59,8 +59,7 @@ public class myTest {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        //
-        // get a key for the HmacMD5 algorithm
+
         System.out.println( "\nStart generating key" );
         KeyGenerator keyGen = null;
         try {
@@ -70,8 +69,8 @@ public class myTest {
         }
         SecretKey MD5key = keyGen.generateKey();
         System.out.println( "Finish generating key" );
-        //
-        // get a MAC object and update it with the plaintext
+
+
         Mac mac = null;
         try {
             mac = Mac.getInstance("HmacMD5");
@@ -84,8 +83,7 @@ public class myTest {
             e.printStackTrace();
         }
         mac.update(plainText);
-        //
-        // print out the provider used and the MAC
+
         System.out.println("\n" + mac.getProvider().getInfo() );
         System.out.println("\nMAC: " );
         try {

@@ -2,13 +2,16 @@ package dao;
 
 import models.User;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 public interface UserDao{
 
     User getById(String id);
     List<User> getAll();
-    boolean addUser(User user);
-    boolean updateUser(User user);
+    boolean add(User user);
+    boolean update(User user);
+    User getUserByLoginPass(String login, String pass);
+    boolean delete(User user);
 
 }

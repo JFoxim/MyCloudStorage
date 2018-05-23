@@ -1,27 +1,34 @@
 package models;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
 public class User implements Serializable {
     @Id
-    @Column(name = "id")
-    private String id;
+    @Column(name = "id_user")
+    private String idUser;
     @Column(name = "login")
     private String login;
     @Column(name = "password")
     private String password;
     @Column(name = "email")
     private String email;
+//    @OneToMany()
+//    private List<String> files;
 
     public User(String login, String password, String email) {
-        this.id = UUID.randomUUID().toString();
+        this.idUser = UUID.randomUUID().toString();
+        this.login = login;
+        this.password = password;
+        this.email = email;
+    }
+
+    public User(String id, String login, String password, String email) {
+        this.idUser = id;
         this.login = login;
         this.password = password;
         this.email = email;
@@ -45,8 +52,8 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getId() {
-        return id;
+    public String getIdUser() {
+        return idUser;
     }
 
     public String getEmail() {

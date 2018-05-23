@@ -1,10 +1,15 @@
 package dao;
 
+import models.File;
 import models.User;
 
 import java.util.List;
 
 public interface FileDao {
-    User getById(long id);
-    List<User> getUserAll();
+    File getById(String id);
+    List<File> getAll();
+    List<File> getByUserId(String userId);
+    boolean add(File file, String userId);
+    boolean update(File file);
+    boolean delete(File file);
 }

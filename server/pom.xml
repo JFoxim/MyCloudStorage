@@ -43,6 +43,25 @@
             <version>3.5.0-Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.zsoltfabok/sqlite-dialect -->
+        <dependency>
+            <groupId>com.zsoltfabok</groupId>
+            <artifactId>sqlite-dialect</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>4.3.6.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -50,7 +69,6 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 </project>

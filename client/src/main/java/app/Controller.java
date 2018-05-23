@@ -1,5 +1,6 @@
 package app;
 
+import app.services.EncriptService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -92,7 +93,7 @@ public class Controller implements Initializable {
 
     public void connect() {
         try {
-            socket = new Socket("localhost", 8189);
+            socket = new Socket("localhost", 9999);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             Thread t = new Thread(new Runnable() {
@@ -161,6 +162,7 @@ public class Controller implements Initializable {
             connect();
         }
         try {
+            String passEncript = EncriptService.generate(passField.getText());
             out.writeUTF("/auth " + loginField.getText() + " " + passField.getText());
             loginField.clear();
             passField.clear();

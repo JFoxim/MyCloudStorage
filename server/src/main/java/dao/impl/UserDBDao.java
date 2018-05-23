@@ -1,6 +1,6 @@
 package dao.impl;
 
-import dao.HibernateHelper;
+import util.*;
 import dao.UserDao;
 import models.User;
 import org.hibernate.HibernateException;
@@ -18,10 +18,10 @@ public class UserDBDao implements UserDao {
     @Override
     public User getById(String id) {
         User user = new User();
-        Session session = HibernateHelper.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Query query = session.createQuery("from User where id = :paramId");
-            query.setParameter("paramId", id);
+            Query query = session.createQuery("from User where id = :userId");
+            query.setParameter("userId", id);
             user = (User) query.getSingleResult();
         }
         catch (HibernateException er){
@@ -35,7 +35,7 @@ public class UserDBDao implements UserDao {
 
     @Override
     public List<User> getAll() {
-        Session session = HibernateHelper.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         List<User> userList = new ArrayList<>();
         try{
             Query query = session.createQuery("from User");
@@ -50,13 +50,13 @@ public class UserDBDao implements UserDao {
     }
 
     @Override
-    public boolean addUser(User user){
+    public boolean add(User user){
         boolean result = true;
-        Session session = HibernateHelper.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Query query = session.createQuery(String.format("INSERT INTO User (id, login, password, email) select '%s', '%s', '%s', '%s'",
-                    user.getId(), user.getLogin(), user.getPassword(), user.getEmail()));
-            query.executeUpdate();
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
         }
         catch (HibernateException er){
             System.out.println(er.getMessage());
@@ -69,15 +69,13 @@ public class UserDBDao implements UserDao {
     }
 
     @Override
-    public boolean updateUser(User user) {
+    public boolean update(User user) {
         boolean result = true;
-        Session session = HibernateHelper.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Query query = session.createQuery("UPDATE User SET login = :login, password = :password, email= :email WHERE id =: userId");
-            query.setParameter("login", user.getLogin());
-            query.setParameter("password", user.getPassword());
-            query.setParameter("email", user.getEmail());
-            query.setParameter("userId", user.getId());
+            session.beginTransaction();
+            session.update(user);
+            session.getTransaction().commit();
         }catch (HibernateException er){
             System.out.println(er.getMessage());
             result = false;
@@ -88,9 +86,10 @@ public class UserDBDao implements UserDao {
         return result;
     }
 
-    public static User getUserByLoginPass(String login, String pass){
+    @Override
+    public User getUserByLoginPass(String login, String pass){
         User user = new User();
-        Session session = HibernateHelper.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             Query query = session.createQuery("from User where login = :paramLogin and password= :paramPass");
             query.setParameter("paramLogin", login);
@@ -106,17 +105,23 @@ public class UserDBDao implements UserDao {
         return user;
     }
 
-
-//    public static String getNickByLoginPass(String login, String pass) {
-////        try {
-//////            int passHash = pass.hashCode();
-//////            ResultSet rs = stmt.executeQuery(String.format("SELECT nick FROM users WHERE login = '%s' AND password = '%d';", login, passHash));
-//////            if (rs.next()) {
-//////                return rs.getString(1);
-//////            }
-//////        } catch (SQLException e) {
-//////            e.printStackTrace();
-//////        }
-//    }
+    @Override
+    public boolean delete(User user) {
+        boolean result = true;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            session.delete(user);
+            session.getTransaction().commit();
+        }
+        catch (HibernateException er){
+            System.out.println(er.getMessage()+" /n" +er.getStackTrace());
+            result = false;
+        }
+        finally {
+            session.close();
+        }
+        return result;
+    }
 
 }

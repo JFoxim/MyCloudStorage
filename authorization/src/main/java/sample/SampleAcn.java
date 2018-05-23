@@ -1,7 +1,8 @@
+package sample;
+
 import java.io.*;
 import java.util.*;
 import javax.security.auth.login.*;
-import javax.security.auth.*;
 import javax.security.auth.callback.*;
 
 /**
@@ -12,19 +13,8 @@ import javax.security.auth.callback.*;
  */
 public class SampleAcn {
 
-    /**
-     * Attempt to authenticate the user.
-     *
-     * <p>
-     *
-     * @param args input arguments for this application.  These are ignored.
-     */
     public static void main(String[] args) {
-
-        // Obtain a LoginContext, needed for authentication. Tell it
-        // to use the LoginModule implementation specified by the
-        // entry named "Sample" in the JAAS login configuration
-        // file and to also use the specified CallbackHandler.
+        System.setProperty("java.security.auth.login.config", "sample_jaas.config");
         LoginContext lc = null;
         try {
             lc = new LoginContext("Sample", new MyCallbackHandler());
@@ -38,15 +28,10 @@ public class SampleAcn {
             System.exit(-1);
         }
 
-        // the user has 3 attempts to authenticate successfully
         int i;
         for (i = 0; i < 3; i++) {
             try {
-
-                // attempt authentication
                 lc.login();
-
-                // if we return with no exception, authentication succeeded
                 break;
 
             } catch (LoginException le) {
@@ -62,7 +47,6 @@ public class SampleAcn {
             }
         }
 
-        // did they fail three times?
         if (i == 3) {
             System.out.println("Sorry");
             System.exit(-1);
@@ -74,37 +58,14 @@ public class SampleAcn {
 }
 
 
-/**
- * The application implements the CallbackHandler.
- *
- * <p> This application is text-based.  Therefore it displays information
- * to the user using the OutputStreams System.out and System.err,
- * and gathers input from the user using the InputStream System.in.
- */
 class MyCallbackHandler implements CallbackHandler {
 
-    /**
-     * Invoke an array of Callbacks.
-     *
-     * <p>
-     *
-     * @param callbacks an array of <code>Callback</code> objects which contain
-     *                  the information requested by an underlying security
-     *                  service to be retrieved or displayed.
-     *
-     * @exception java.io.IOException if an input or output error occurs. <p>
-     *
-     * @exception UnsupportedCallbackException if the implementation of this
-     *                  method does not support one or more of the Callbacks
-     *                  specified in the <code>callbacks</code> parameter.
-     */
     public void handle(Callback[] callbacks)
             throws IOException, UnsupportedCallbackException {
 
         for (int i = 0; i < callbacks.length; i++) {
             if (callbacks[i] instanceof TextOutputCallback) {
 
-                // display the message according to the specified type
                 TextOutputCallback toc = (TextOutputCallback)callbacks[i];
                 switch (toc.getMessageType()) {
                     case TextOutputCallback.INFORMATION:
