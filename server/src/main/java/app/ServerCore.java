@@ -1,34 +1,25 @@
 package app;
 
 import Services.FileService;
-import example.FilesThread;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
-public class Server {
+public class ServerCore {
     private ServerSocket serverSocket;
-    List<File> files = new ArrayList<File>();
     private Vector<ClientHandler> clients;
 
-    public Server() {
+    public ServerCore() {
         try {
-            //SQLHandler.connect();
-           File file = FileService.createGlobalDir();
+            FileService.createGlobalDir();
             serverSocket = new ServerSocket(9999);
             clients = new Vector<ClientHandler>();
             System.out.println("Сервер запущен");
             while (true) {
                 Socket socket = serverSocket.accept();
-                FilesThread thread = new FilesThread(socket,files);
-                Thread th = new Thread(thread);
-                th.start();
-                System.out.println("Клиент подключился");
+                 System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
             }
         } catch (Exception e) {
@@ -39,17 +30,16 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            SQLHandler.disconnect();
         }
     }
 
     public void sendPrivateMsg(ClientHandler from, String to, String msg) {
         for (ClientHandler o : clients) {
-            if(o.getNick().equals(to)) {
-                o.sendMsg("from " + from.getNick() + ": " + msg);
+            if(o.getLogin().equals(to)) {
+                o.sendMsg("from " + from.getLogin() + ": " + msg);
                 from.sendMsg("to " + to + ": " + msg);
-                SQLHandler.addHistory(from.getId(), o.getId(), "from " + from.getNick() + ": " + msg);
-                SQLHandler.addHistory(from.getId(), from.getId(), "to " + o.getNick() + ": " + msg);
+                //SQLHandler.addHistory(from.getId(), o.getId(), "from " + from.getLogin() + ": " + msg);
+                //SQLHandler.addHistory(from.getId(), from.getId(), "to " + o.getLogin() + ": " + msg);
                 return;
             }
         }
@@ -57,8 +47,8 @@ public class Server {
     }
 
     public void broadcastMsg(ClientHandler client, String msg) {
-        String outMsg = client.getNick() + ": " + msg;
-        SQLHandler.addHistory(client.getId(), -1, outMsg);
+        String outMsg = client.getLogin() + ": " + msg;
+        //SQLHandler.addHistory(client.getId(), -1, outMsg);
         for (ClientHandler o : clients) {
             o.sendMsg(outMsg);
         }
@@ -68,7 +58,7 @@ public class Server {
         StringBuilder sb = new StringBuilder();
         sb.append("/clientslist ");
         for (ClientHandler o : clients) {
-            sb.append(o.getNick() + " ");
+            sb.append(o.getLogin() + " ");
         }
         String out = sb.substring(0, sb.length() - 1);
         for (ClientHandler o : clients) {
@@ -88,7 +78,7 @@ public class Server {
 
     public boolean isNickBusy(String nick) {
         for (ClientHandler o : clients) {
-            if (o.getNick().equals(nick)) {
+            if (o.getLogin().equals(nick)) {
                 return true;
             }
         }

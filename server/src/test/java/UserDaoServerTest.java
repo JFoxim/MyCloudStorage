@@ -1,29 +1,30 @@
 import dao.impl.UserDBDao;
+import models.File;
 import models.User;
 import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import util.HibernateUtil;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-
+@Ignore
 public class UserDaoServerTest {
 
-    @Before
-    public void initData(){
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.close();
-        UserDBDao userDao = new UserDBDao();
-        User user = new User("b80de869-53af-4ab5-b490-fe8a9943f166",
-                "testUser", "123", "testUser@mail.ru");
-        User user3 = new User("b80de869-53af-4ab5-b490-fe8a9943f168",
-                "testUser3", "123", "testUser3@mail.ru");
-        userDao.add(user);
-        userDao.add(user3);
-    }
+//    @Before
+//    public void initData(){
+//        Session session = HibernateUtil.getSessionFactory().openSession();
+//        session.close();
+//        UserDBDao userDao = new UserDBDao();
+//        User user = new User("b80de869-53af-4ab5-b490-fe8a9943f166",
+//                "testUser", "123", "testUser@mail.ru");
+//        User user3 = new User("b80de869-53af-4ab5-b490-fe8a9943f168",
+//                "testUser3", "123", "testUser3@mail.ru");
+//        userDao.add(user);
+//        userDao.add(user3);
+//    }
 
 //    @After
 //    public void clearData(){
@@ -74,5 +75,12 @@ public class UserDaoServerTest {
         user.setLogin("testUser3_updated");
         Assert.assertTrue(userDBDao.update(user));
         Assert.assertEquals(user.getLogin(), userDBDao.getById("b80de869-53af-4ab5-b490-fe8a9943f168").getLogin());
+    }
+
+    @Test
+    public void getUserFiles(){
+        UserDBDao userDBDao = new UserDBDao();
+        Set<File> files = userDBDao.getById("b80de869-53af-4ab5-b490-fe8a9943f166").getFiles();
+        Assert.assertEquals(1, userDBDao.getById("b80de869-53af-4ab5-b490-fe8a9943f166").getFiles().stream().count());
     }
 }

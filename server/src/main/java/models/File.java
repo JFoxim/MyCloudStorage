@@ -1,12 +1,15 @@
 package models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +24,8 @@ public class File {
     private Date dtCreate;
     @Column(name = "description")
     private String description;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "files")
+    private Set<User> users = new HashSet<>();
 
     public File(String path, String description) {
         this.path = path;
@@ -38,8 +43,7 @@ public class File {
         this.description = description;
     }
 
-    public File(){
-    }
+    public File(){  }
 
     public String getIdFile() {
         return idFile;
@@ -68,4 +72,14 @@ public class File {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Set<User> getUser() {
+        return users;
+    }
+
+    public void setUser(Set<User> user) {
+        this.users = user;
+    }
 }
+
+

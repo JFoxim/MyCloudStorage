@@ -1,7 +1,7 @@
-package example;
+package old.example;
 
-import example.models.CloudCore;
-import example.models.FileTableModel;
+import old.example.models.CloudCore;
+import old.example.models.FileTableModel;
 
 import javax.swing.*;
 import java.awt.*;

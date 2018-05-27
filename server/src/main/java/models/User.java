@@ -1,7 +1,9 @@
 package models;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.*;
 
@@ -17,8 +19,10 @@ public class User implements Serializable {
     private String password;
     @Column(name = "email")
     private String email;
-//    @OneToMany()
-//    private List<String> files;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "users_files", joinColumns = {@JoinColumn(name = "id_user")},
+            inverseJoinColumns = {@JoinColumn(name = "id_file")})
+    private Set<File> files = new HashSet<>();
 
     public User(String login, String password, String email) {
         this.idUser = UUID.randomUUID().toString();
@@ -62,5 +66,13 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<File> files) {
+        this.files = files;
     }
 }

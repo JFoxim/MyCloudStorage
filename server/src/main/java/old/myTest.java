@@ -1,8 +1,11 @@
-package app;
+package old;
 
 import sun.plugin2.message.Message;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import java.security.*;
@@ -13,8 +16,19 @@ public class myTest {
 
         //uuidTest();
         //encript();
-        MessageAuth();
+        //dd();
+        //MessageAuth();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date dt = new Date();
+        System.out.println(dt);
 
+    }
+
+    public static void dd(){
+        for (int i = 0; i < 30; i++) {
+            int res = (UUID.randomUUID().toString().hashCode() + UUID.randomUUID().toString().hashCode());
+            System.out.println(res);
+        }
     }
 
     public static void uuidTest(){

@@ -4,6 +4,7 @@ import models.User;
 
 import javax.jws.soap.SOAPBinding;
 import java.util.List;
+import java.util.UUID;
 
 public interface UserDao{
 

@@ -1,26 +1,32 @@
 package app;
+import Services.FileService;
+import Services.UserService;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler {
-    private Server server;
+    private ServerCore server;
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
     private String nick;
-    private int id;
+    private String id;
+    List<File> files = new ArrayList<File>();
 
-    public String getNick() {
+    public String getLogin() {
         return nick;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(ServerCore server, Socket socket) {
         try {
             this.server = server;
             this.socket = socket;
@@ -33,16 +39,17 @@ public class ClientHandler {
                         if (msg.startsWith("/auth ")) {
                             // /auth login1 pass1
                             String[] tokens = msg.split(" ");
-                            String nick = SQLHandler.getNickByLoginPass(tokens[1], tokens[2]);
-                            if (nick != null) {
-                                if (server.isNickBusy(nick)) {
+                            String login = tokens[1];
+                             if (UserService.checkUserByLoginPass(tokens[1], tokens[2])) {
+                                if (server.isNickBusy(login)) {
                                     out.writeUTF("Учетная запись уже используется");
                                     continue;
                                 }
-                                out.writeUTF("/authok " + nick);
-                                this.nick = nick;
-                                this.id = SQLHandler.getIdByNick(nick);
+                                out.writeUTF("/authok " + login);
+                                this.nick = login;
+                                this.id = UserService.getUserIdByLogin(login);//SQLHandler.getIdByNick(login);
                                 server.subscribe(this);
+                                 FileService.createUserCloudDirectory(login);
                                 break;
                             } else {
                                 out.writeUTF("Неверный логин/пароль");
@@ -51,15 +58,22 @@ public class ClientHandler {
                         automaticDisconnect();
                     }
                     while (true) {
+
+
+                        FilesThread thread = new FilesThread(socket, files);
+                        Thread th = new Thread(thread);
+                        th.start();
+
+
                         String msg = in.readUTF();
                         if (msg.startsWith("/")) {
                             if (msg.startsWith("/w ")) {
                                 String[] tokens = msg.split(" ", 3);
                                 server.sendPrivateMsg(this, tokens[1], tokens[2]);
                             }
-                            if (msg.equals("/history")) {
-                                sendMsg(SQLHandler.getHistory(id));
-                            }
+//                            if (msg.equals("/history")) {
+//                                sendMsg(SQLHandler.getHistory(id));
+//                            }
                         } else {
                             server.broadcastMsg(this, msg);
                         }
@@ -87,7 +101,7 @@ public class ClientHandler {
     private void disconnect(){
         server.unsubscribe(this);
         this.nick = null;
-        this.id = -1;
+        this.id = "-1";
         try {
             socket.close();
         } catch (IOException e) {
@@ -140,11 +154,4 @@ public class ClientHandler {
             }
         }).start();
     }
-
-//    class Dis extends TimerTask {
-//        public void run() {
-//            disconnect();
-//            //System.out.println("disconnect!");
-//        }
-//    }
 }

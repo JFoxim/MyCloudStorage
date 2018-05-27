@@ -1,5 +1,6 @@
 package app;
 
+import app.models.CloudCore;
 import app.services.EncriptService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -10,12 +11,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -23,8 +27,11 @@ public class Controller implements Initializable {
     private DataInputStream in;
     private DataOutputStream out;
     private boolean authorized;
-    private String nick;
+    private String login;
     private ObservableList<String> clientsList;
+    private ObservableList<String> fileList;
+    private CloudCore core;
+    FileChooser fileChooser = new FileChooser();
 
     @FXML
     TextField msgField;
@@ -44,6 +51,15 @@ public class Controller implements Initializable {
     @FXML
     ListView<String> clientsView;
 
+    @FXML
+    TableView fileTable;
+
+    @FXML
+    Button btnAddFile;
+
+    @FXML
+    Button btnDelFile;
+
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
@@ -61,7 +77,7 @@ public class Controller implements Initializable {
             msgPanel.setManaged(false);
             clientsView.setVisible(false);
             clientsView.setManaged(false);
-            nick = "";
+            login = "";
         }
     }
 
@@ -70,6 +86,8 @@ public class Controller implements Initializable {
         setAuthorized(false);
         clientsList = FXCollections.observableArrayList();
         clientsView.setItems(clientsList);
+        fileChooser.setTitle("Выбрать файлы ");
+
     }
 
     public void sendMsg() {
@@ -90,19 +108,39 @@ public class Controller implements Initializable {
         }
     }
 
+    public void addFile(){
+        //btnAddFile.getParent()
+        List<File> list = fileChooser.showOpenMultipleDialog(app.MainApp.getPrimaryStage());
+        if (list != null) {
+            for (File file : list) {
+                //openFile(file);
+                core.putFile(file);
+                fileTable.setItems();
+            }
+        }
+    }
+
+    public void deleteFile(){
+        //fileTable.getFocusModel().getFocusedItem()
+        //core.removeFile();
+    }
+
 
     public void connect() {
         try {
             socket = new Socket("localhost", 9999);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            CloudCore cloudCore = new CloudCore(socket);
+            this.core = cloudCore;
+
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     try {
                         while (true) {
                             String str = in.readUTF();
                             if (str.startsWith("/authok ")) {
-                                nick = str.split(" ")[1];
+                                login = str.split(" ")[1];
                                 setAuthorized(true);
                                 sendCustomMsg("/history");
                                 break;

@@ -7,9 +7,14 @@ import java.io.File;
 
 public class FileService {
 
-    public static String globalPath="D:\\Downloded_files";
+    private static String globalPath; // ="D:\\Downloded_files";
+    private static String getUserPath;
 
     public static File createGlobalDir(){
+
+        SettingsService settingsService = new SettingsService();
+        globalPath = settingsService.getPath();
+
         File globalDir = new File(globalPath);
         if (!globalDir.exists()){
             try {
@@ -19,12 +24,35 @@ public class FileService {
                 return null;
             }
         }
+        System.out.println("Директория готова");
         return globalDir.exists()? globalDir : null;
     }
 
-    public static File createCloudDirectory(String userId){
+    public static boolean addFileGlobalDir(String fileName){
+        boolean result = false;
+        String userFilePath = String.format("%s%s%s", globalPath, File.separator, getUserPath);
+        File file = new File(userFilePath);
 
-        File file = new File(String.format("%s%s%s", globalPath, File.separator, userId));//"/home/romario/files");
+
+        return result;
+    }
+
+    public static boolean deleteFileGlobalDir(String fileName){
+        boolean result = false;
+        String userFilePath = String.format("%s%s%s", globalPath, File.separator, getUserPath);
+        try {
+            File file = new File(userFilePath);
+            file.delete();
+        }
+        catch (Exception er){
+            System.out.println(er.getMessage());
+        }
+        return result;
+    }
+
+    public static File createUserCloudDirectory(String login){
+        String userPath = String.format("%s%s%s", globalPath, File.separator, login);
+        File file = new File(userPath);//"/home/romario/files");
         if (!file.exists()) {
             try {
                 file.mkdir();
@@ -35,6 +63,7 @@ public class FileService {
         } else {
             System.out.println("Директория готова");
         }
+        getUserPath = userPath;
         return file.exists()? file : null;
     }
 }

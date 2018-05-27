@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TableView?>
 <HBox alignment="center" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="app.Controller">
     <VBox HBox.hgrow="ALWAYS">
         <HBox fx:id="authPanel">
@@ -16,6 +17,11 @@
             <Button onAction="#sendAuth" text="Авторизоваться" />
         </HBox>
         <TextArea fx:id="mainTextArea" editable="false" focusTraversable="false" VBox.vgrow="ALWAYS" />
+        <HBox fx:id="fileTablePanel">
+            <Button fx:id="btnAddFile" onAction="#addFile" text="Добавить файл" />
+            <Button fx:id="btnDelFile" onAction="#deleteFile" text="Удалить файл" />
+            <TableView fx:id="fileTable" editable="false" minHeight="100" minWidth="200" VBox.vgrow="ALWAYS" />
+        </HBox>
         <HBox fx:id="msgPanel">
             <TextField fx:id="msgField" onAction="#sendMsg" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" />
             <Button onAction="#sendMsg" text="Отправить" />

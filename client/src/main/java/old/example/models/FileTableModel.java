@@ -1,4 +1,4 @@
-package example.models;
+package old.example.models;
 
 import javax.swing.table.AbstractTableModel;
 import java.io.File;

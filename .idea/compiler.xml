@@ -12,11 +12,11 @@
         <module name="server" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="authorization" target="1.5" />
-      <module name="client" target="1.5" />
-      <module name="common" target="1.5" />
-      <module name="MyCloudStorage" target="1.5" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="authorization" target="1.8" />
+      <module name="client" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="MyCloudStorage" target="1.8" />
       <module name="server" target="1.8" />
     </bytecodeTargetLevel>
   </component>

@@ -2,6 +2,7 @@ package dao.impl;
 
 import dao.FileDao;
 import models.File;
+import models.RightFile;
 import models.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -9,6 +10,7 @@ import org.hibernate.query.Query;
 import util.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class FileDBDao implements FileDao {
     @Override
@@ -46,33 +48,17 @@ public class FileDBDao implements FileDao {
     }
 
     @Override
-    public List<File> getByUserId(String userId) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        List<File> fileList = new ArrayList<>();
-        try{
-//            Query query = session.createQuery("select f.id, f.path, f.dt_create, f.description from files f " +
-//                    "inner join users_files uf on f.id=uf.files_id  " +
-//                    "where uf.user_id='"+userId+"'");
-            Query query = session.createQuery("from File as f inner join UserFile as uf f.idFile where uf.idUser=:userId");
-            query.setParameter("userId", userId);
-            fileList = query.list();
-        }
-        catch (HibernateException er) {
-            System.out.println(er.getMessage());
-        }finally {
-            session.close();
-        }
-        return fileList;
-    }
-
-    @Override
-    public boolean add(File file, String userId) {
+    public boolean add(File file, boolean isWrite) {
         boolean result = true;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             session.beginTransaction();
             session.save(file);
-            //session.save();
+            Set<User> users = file.getUser();
+            for (User user : users){
+                RightFile rightFile = new RightFile(user.getIdUser(), file.getIdFile(), isWrite);
+                session.save(rightFile);
+            }
             session.getTransaction().commit();
         }
         catch (HibernateException er){
@@ -87,7 +73,20 @@ public class FileDBDao implements FileDao {
 
     @Override
     public boolean update(File file) {
-        return false;
+        boolean result = true;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            session.beginTransaction();
+            session.update(file);
+            session.getTransaction().commit();
+        }catch (HibernateException er){
+            System.out.println(er.getMessage());
+            result = false;
+        }
+        finally {
+            session.close();
+        }
+        return result;
     }
 
     @Override
@@ -96,7 +95,12 @@ public class FileDBDao implements FileDao {
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             session.beginTransaction();
+            Set<User> users = file.getUser();
             session.delete(file);
+            for (User user : users){
+                RightFile rightFile = new RightFile(user.getIdUser(), file.getIdFile(), false);
+                session.delete(rightFile);
+            }
             session.getTransaction().commit();
         }
         catch (HibernateException er){

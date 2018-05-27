@@ -1,5 +1,6 @@
 package dao.impl;
 
+import models.File;
 import util.*;
 import dao.UserDao;
 import models.User;
@@ -9,8 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class UserDBDao implements UserDao {
 
@@ -22,6 +22,23 @@ public class UserDBDao implements UserDao {
         try {
             Query query = session.createQuery("from User where id = :userId");
             query.setParameter("userId", id);
+            user = (User) query.getSingleResult();
+        }
+        catch (HibernateException er){
+            System.out.println(er.getMessage());
+        }
+        finally {
+            session.close();
+        }
+        return user;
+    }
+
+    public User getByLogin(String id) {
+        User user = new User();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            Query query = session.createQuery("from User where login = :userLogin");
+            query.setParameter("userLogin", id);
             user = (User) query.getSingleResult();
         }
         catch (HibernateException er){
@@ -123,5 +140,6 @@ public class UserDBDao implements UserDao {
         }
         return result;
     }
+
 
 }

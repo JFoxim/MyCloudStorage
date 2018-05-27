@@ -1,5 +1,7 @@
 package app;
 
+import Services.FileService;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -32,10 +34,12 @@ public class FilesThread implements Runnable {
                         File requestFile = (File) request;
                         System.out.println("Получен файл "+requestFile.getName());
                         if (files.contains(requestFile)){
+                            FileService.deleteFileGlobalDir(requestFile.getName());
                             files.remove(requestFile);
                             System.out.println("Количество объектов после удаления "+files.size());
                         }
                         else {
+                            FileService.addFileGlobalDir(requestFile.getName());
                             files.add(requestFile);
                             System.out.println("Количество объектов после добавления "+files.size());
                         }
