@@ -72,15 +72,11 @@ public class Controller implements Initializable {
             authPanel.setManaged(false);
             fileTable.setVisible(true);
             fileTable.setManaged(true);
-//            clientsView.setVisible(true);
-//            clientsView.setManaged(true);
         } else {
             authPanel.setVisible(true);
             authPanel.setManaged(true);
             fileTable.setVisible(false);
             fileTable.setManaged(false);
-//            clientsView.setVisible(false);
-//            clientsView.setManaged(false);
             login = "";
         }
     }
@@ -119,11 +115,11 @@ public class Controller implements Initializable {
         if (list != null) {
             for (File file : list) {
                 //openFile(file);
-                core.putFile(file);
                 UUID id = UUID.randomUUID();
                 String size = String.valueOf(file.length()/1024);
                 FileData fileData = new FileData(id.toString(), file.getName(), size);
                 fileList.add(fileData);
+                core.putFile(file);
                 //fileTable.setItems(fileList);
             }
         }
@@ -138,11 +134,10 @@ public class Controller implements Initializable {
     public void connect() {
         try {
             socket = new Socket("localhost", 9999);
+            CloudCore core = new CloudCore(socket);
+            this.core = core;
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            //CloudCore cloudCore = new CloudCore(socket);
-            //this.core = cloudCore;
-
 
             Thread t = new Thread(new Runnable() {
                 public void run() {
@@ -152,30 +147,13 @@ public class Controller implements Initializable {
                             if (str.startsWith("/authok ")) {
                                 login = str.split(" ")[1];
                                 setAuthorized(true);
-                                sendCustomMsg("/history");
+                                System.out.println("авторизация прошла успешно");
                                 break;
                             }
-                            //fileList.add();
                         }
+                        while (true){
 
-
-//                        while (true) {
-//                            String str = in.readUTF();
-//                            if (str.startsWith("/")) {
-//                                if (str.startsWith("/clientslist ")) {
-//                                    String[] tokens = str.split(" ");
-//                                    Platform.runLater(() -> {
-//                                        clientsList.clear();
-//                                        for (int i = 1; i < tokens.length; i++) {
-//                                            clientsList.add(tokens[i]);
-//                                        }
-//                                    });
-//                                }
-//                                continue;
-//                           }
-//                            //mainTextArea.appendText(str);
-//                            //mainTextArea.appendText("\n");
-//                        }
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {

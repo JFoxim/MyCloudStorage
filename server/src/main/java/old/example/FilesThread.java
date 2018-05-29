@@ -50,9 +50,6 @@ public class FilesThread implements Runnable {
                         }
                     }
                 }
-
-
-
             }
 
         } catch (Exception e){

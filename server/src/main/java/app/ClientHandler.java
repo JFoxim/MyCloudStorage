@@ -1,10 +1,8 @@
 package app;
 import Services.FileService;
 import Services.UserService;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,27 +53,56 @@ public class ClientHandler {
                                 out.writeUTF("Неверный логин/пароль");
                             }
                         }
-                        automaticDisconnect();
-                    }
-                    while (true) {
-                        FilesThread thread = new FilesThread(socket, files);
-                        Thread th = new Thread(thread);
-                        th.start();
-                        String msg = in.readUTF();
-                        if (msg.startsWith("/")) {
-                            if (msg.startsWith("/w ")) {
-                                String[] tokens = msg.split(" ", 3);
-                                server.sendPrivateMsg(this, tokens[1], tokens[2]);
+                        //automaticDisconnect();
+
+                        ObjectInputStream inputObject = new ObjectInputStream(in);
+                        ObjectOutputStream outputStream = new ObjectOutputStream(out);
+                        while(true){
+                            Object request = new Object();
+                            while (true){
+                                request = inputObject.readObject();
+                                if (request instanceof File){
+                                    File requestFile = (File) request;
+                                    System.out.println("Получен файл "+requestFile.getName());
+                                    if (files.contains(requestFile)){
+                                        FileService.deleteFileGlobalDir(requestFile.getName());
+                                        files.remove(requestFile);
+                                        System.out.println("Количество объектов после удаления "+files.size());
+                                    }
+                                    else {
+                                        FileService.addFileGlobalDir(requestFile.getName());
+                                        files.add(requestFile);
+                                        System.out.println("Количество объектов после добавления "+files.size());
+                                    }
+                                }
+                                if (request instanceof String){
+                                    String question = request.toString();
+                                    if (question.equals("get")){
+                                        System.out.println(" Получена команда get");
+                                        outputStream.writeObject(files);
+                                        outputStream.flush();
+                                        System.out.println("Файлы отправлены клиенту!");
+                                    }
+                                }
                             }
-//                            if (msg.equals("/history")) {
-//                                sendMsg(SQLHandler.getHistory(id));
-//                            }
-                        } else {
-                            server.broadcastMsg(this, msg);
                         }
-                        System.out.println(msg);
-                    }
+//                        FilesThread thread = new FilesThread(socket, files);
+//                        Thread th = new Thread(thread);
+//                        th.start();
+//                        if (msg.startsWith("/")) {
+//                            if (msg.startsWith("/w ")) {
+//                                String[] tokens = msg.split(" ", 3);
+//                                server.sendPrivateMsg(this, tokens[1], tokens[2]);
+//                            }
+//
+//                        } else {
+//                            server.broadcastMsg(this, msg);
+//                        }
+                        //System.out.println(msg);
+                  }
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } finally {
                     disconnect();
