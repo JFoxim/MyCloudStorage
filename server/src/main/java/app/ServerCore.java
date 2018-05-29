@@ -18,7 +18,7 @@ public class ServerCore {
             clients = new Vector<ClientHandler>();
             System.out.println("Сервер запущен");
             while (true) {
-                Socket socket = serverSocket.accept();
+                 Socket socket = serverSocket.accept();
                  System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
             }
@@ -49,26 +49,26 @@ public class ServerCore {
     public void broadcastMsg(ClientHandler client, String msg) {
         String outMsg = client.getLogin() + ": " + msg;
         //SQLHandler.addHistory(client.getId(), -1, outMsg);
-        for (ClientHandler o : clients) {
-            o.sendMsg(outMsg);
-        }
+//        for (ClientHandler o : clients) {
+//            o.sendMsg(outMsg);
+//        }
     }
 
     public void broadcastClientsList() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("/clientslist ");
-        for (ClientHandler o : clients) {
-            sb.append(o.getLogin() + " ");
-        }
-        String out = sb.substring(0, sb.length() - 1);
-        for (ClientHandler o : clients) {
-            o.sendMsg(out);
-        }
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("/clientslist ");
+//        for (ClientHandler o : clients) {
+//            sb.append(o.getLogin() + " ");
+//        }
+//        String out = sb.substring(0, sb.length() - 1);
+//        for (ClientHandler o : clients) {
+//            o.sendMsg(out);
+//        }
     }
 
     public void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
-        broadcastClientsList();
+        //broadcastClientsList();
     }
 
     public void unsubscribe(ClientHandler clientHandler) {

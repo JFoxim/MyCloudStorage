@@ -1,6 +1,7 @@
 package app;
 
 import app.models.CloudCore;
+import app.models.FileData;
 import app.services.EncriptService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -21,6 +22,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class Controller implements Initializable {
     private Socket socket;
@@ -28,16 +30,10 @@ public class Controller implements Initializable {
     private DataOutputStream out;
     private boolean authorized;
     private String login;
-    private ObservableList<String> clientsList;
-    private ObservableList<String> fileList;
+    //private ObservableList<String> clientsList;
+    private ObservableList<FileData> fileList;
     private CloudCore core;
     FileChooser fileChooser = new FileChooser();
-
-    @FXML
-    TextField msgField;
-
-    @FXML
-    TextArea mainTextArea;
 
     @FXML
     TextField loginField;
@@ -46,13 +42,15 @@ public class Controller implements Initializable {
     PasswordField passField;
 
     @FXML
-    HBox authPanel, msgPanel;
+    HBox authPanel, fileTablePanel;
 
     @FXML
-    ListView<String> clientsView;
+    TableView<FileData> fileTable;
 
     @FXML
-    TableView fileTable;
+    private TableColumn<FileData, String> fileNameColumn;
+    @FXML
+    private TableColumn<FileData, String> fileSizeColumn;
 
     @FXML
     Button btnAddFile;
@@ -60,23 +58,29 @@ public class Controller implements Initializable {
     @FXML
     Button btnDelFile;
 
+    @FXML
+    private void initialize() {
+        fileNameColumn.setCellValueFactory(cellData -> cellData.getValue().getFileName());
+        fileSizeColumn.setCellValueFactory(cellData -> cellData.getValue().getSize());
+    }
+
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (this.authorized) {
             authPanel.setVisible(false);
             authPanel.setManaged(false);
-            msgPanel.setVisible(true);
-            msgPanel.setManaged(true);
-            clientsView.setVisible(true);
-            clientsView.setManaged(true);
+            fileTable.setVisible(true);
+            fileTable.setManaged(true);
+//            clientsView.setVisible(true);
+//            clientsView.setManaged(true);
         } else {
             authPanel.setVisible(true);
             authPanel.setManaged(true);
-            msgPanel.setVisible(false);
-            msgPanel.setManaged(false);
-            clientsView.setVisible(false);
-            clientsView.setManaged(false);
+            fileTable.setVisible(false);
+            fileTable.setManaged(false);
+//            clientsView.setVisible(false);
+//            clientsView.setManaged(false);
             login = "";
         }
     }
@@ -84,21 +88,22 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setAuthorized(false);
-        clientsList = FXCollections.observableArrayList();
-        clientsView.setItems(clientsList);
+        //clientsList = FXCollections.observableArrayList();
+        //clientsView.setItems(clientsList);
+        fileList = FXCollections.observableArrayList();
+        fileTable.setItems(fileList);
         fileChooser.setTitle("Выбрать файлы ");
-
     }
 
-    public void sendMsg() {
-        try {
-            out.writeUTF(msgField.getText());
-            msgField.clear();
-            msgField.requestFocus();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void sendMsg() {
+//        try {
+//              out.writeUTF(msgField.getText());
+//              msgField.clear();
+//              msgField.requestFocus();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void sendCustomMsg(String msg) {
         try {
@@ -115,7 +120,11 @@ public class Controller implements Initializable {
             for (File file : list) {
                 //openFile(file);
                 core.putFile(file);
-                fileTable.setItems();
+                UUID id = UUID.randomUUID();
+                String size = String.valueOf(file.length()/1024);
+                FileData fileData = new FileData(id.toString(), file.getName(), size);
+                fileList.add(fileData);
+                //fileTable.setItems(fileList);
             }
         }
     }
@@ -131,8 +140,9 @@ public class Controller implements Initializable {
             socket = new Socket("localhost", 9999);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            CloudCore cloudCore = new CloudCore(socket);
-            this.core = cloudCore;
+            //CloudCore cloudCore = new CloudCore(socket);
+            //this.core = cloudCore;
+
 
             Thread t = new Thread(new Runnable() {
                 public void run() {
@@ -145,26 +155,27 @@ public class Controller implements Initializable {
                                 sendCustomMsg("/history");
                                 break;
                             }
-                            mainTextArea.appendText(str);
-                            mainTextArea.appendText("\n");
+                            //fileList.add();
                         }
-                        while (true) {
-                            String str = in.readUTF();
-                            if (str.startsWith("/")) {
-                                if (str.startsWith("/clientslist ")) {
-                                    String[] tokens = str.split(" ");
-                                    Platform.runLater(() -> {
-                                        clientsList.clear();
-                                        for (int i = 1; i < tokens.length; i++) {
-                                            clientsList.add(tokens[i]);
-                                        }
-                                    });
-                                }
-                                continue;
-                            }
-                            mainTextArea.appendText(str);
-                            mainTextArea.appendText("\n");
-                        }
+
+
+//                        while (true) {
+//                            String str = in.readUTF();
+//                            if (str.startsWith("/")) {
+//                                if (str.startsWith("/clientslist ")) {
+//                                    String[] tokens = str.split(" ");
+//                                    Platform.runLater(() -> {
+//                                        clientsList.clear();
+//                                        for (int i = 1; i < tokens.length; i++) {
+//                                            clientsList.add(tokens[i]);
+//                                        }
+//                                    });
+//                                }
+//                                continue;
+//                           }
+//                            //mainTextArea.appendText(str);
+//                            //mainTextArea.appendText("\n");
+//                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -219,10 +230,10 @@ public class Controller implements Initializable {
 
     public void clickClientsList(MouseEvent mouseEvent) {
         if(mouseEvent.getClickCount() == 2) {
-            String str = clientsView.getSelectionModel().getSelectedItem();
-            msgField.setText("/w " + str + " ");
-            msgField.requestFocus();
-            msgField.selectEnd();
+//            String str = fileTable.getSelectionModel().getSelectedItem();
+//            msgField.setText("/w " + str + " ");
+//            msgField.requestFocus();
+//            msgField.selectEnd();
         }
     }
 }

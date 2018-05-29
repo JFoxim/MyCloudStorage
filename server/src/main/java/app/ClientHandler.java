@@ -58,13 +58,9 @@ public class ClientHandler {
                         automaticDisconnect();
                     }
                     while (true) {
-
-
                         FilesThread thread = new FilesThread(socket, files);
                         Thread th = new Thread(thread);
                         th.start();
-
-
                         String msg = in.readUTF();
                         if (msg.startsWith("/")) {
                             if (msg.startsWith("/w ")) {

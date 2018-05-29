@@ -16,16 +16,11 @@
             <PasswordField fx:id="passField" onAction="#sendAuth" promptText="Пароль" HBox.hgrow="ALWAYS" />
             <Button onAction="#sendAuth" text="Авторизоваться" />
         </HBox>
-        <TextArea fx:id="mainTextArea" editable="false" focusTraversable="false" VBox.vgrow="ALWAYS" />
         <HBox fx:id="fileTablePanel">
             <Button fx:id="btnAddFile" onAction="#addFile" text="Добавить файл" />
             <Button fx:id="btnDelFile" onAction="#deleteFile" text="Удалить файл" />
-            <TableView fx:id="fileTable" editable="false" minHeight="100" minWidth="200" VBox.vgrow="ALWAYS" />
         </HBox>
-        <HBox fx:id="msgPanel">
-            <TextField fx:id="msgField" onAction="#sendMsg" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" />
-            <Button onAction="#sendMsg" text="Отправить" />
-        </HBox>
+        <TableView fx:id="fileTable" editable="false" VBox.vgrow="ALWAYS"  HBox.hgrow="ALWAYS" />
     </VBox>
-    <ListView prefWidth="200" fx:id="clientsView" onMouseClicked="#clickClientsList" />
+    <!--ListView prefWidth="200" fx:id="clientsView" onMouseClicked="#clickClientsList" /-->
 </HBox>
