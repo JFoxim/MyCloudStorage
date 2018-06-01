@@ -1,8 +1,6 @@
 package app.models;
 
-import java.io.File;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +9,17 @@ import java.util.List;
 public class CloudCore {
     public List<File> localFiles = new ArrayList<File>();
     static Socket socket;
-    ObjectOutputStream output;
-    ObjectInputStream input;
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
+    private OutputStream outStrem;
+    private InputStream inStream;
 
     public CloudCore(Socket socket) throws Exception{
         this.socket = socket;
-        output = new ObjectOutputStream(socket.getOutputStream());
+        this.output = output;
         output.writeObject("get");
         output.flush();
-        input = new ObjectInputStream(socket.getInputStream());
+        this.input = input;
         Object obj = input.readObject();
         localFiles = (List<File>)obj;
     }
@@ -42,4 +42,35 @@ public class CloudCore {
         }
     }
 
+    public ObjectOutputStream getOutput(){
+        return output;
+    }
+
+    public ObjectInputStream getInput(){
+        return input;
+    }
+
+    public void setOutput(ObjectOutputStream output){
+        this.output = output;
+    }
+
+    public void setInput(ObjectInputStream input){
+        this.input = input;
+    }
+
+    public OutputStream getOutStrem() {
+        return outStrem;
+    }
+
+    public void setOutStrem(OutputStream outStrem) {
+        this.outStrem = outStrem;
+    }
+
+    public InputStream getInStream() {
+        return inStream;
+    }
+
+    public void setInStream(InputStream inStream) {
+        this.inStream = inStream;
+    }
 }

@@ -84,11 +84,9 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setAuthorized(false);
-        //clientsList = FXCollections.observableArrayList();
-        //clientsView.setItems(clientsList);
         fileList = FXCollections.observableArrayList();
         fileTable.setItems(fileList);
-        fileChooser.setTitle("Выбрать файлы ");
+        fileChooser.setTitle("Выбрать файлы...");
     }
 
 //    public void sendMsg() {
@@ -110,7 +108,6 @@ public class Controller implements Initializable {
     }
 
     public void addFile(){
-        //btnAddFile.getParent()
         List<File> list = fileChooser.showOpenMultipleDialog(app.MainApp.getPrimaryStage());
         if (list != null) {
             for (File file : list) {
@@ -131,14 +128,11 @@ public class Controller implements Initializable {
     }
 
 
-    public void connect() {
+    public void autorization() {
         try {
             socket = new Socket("localhost", 9999);
-            CloudCore core = new CloudCore(socket);
-            this.core = core;
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -150,9 +144,6 @@ public class Controller implements Initializable {
                                 System.out.println("авторизация прошла успешно");
                                 break;
                             }
-                        }
-                        while (true){
-
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -182,6 +173,20 @@ public class Controller implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void connect() {
+        autorization();
+        try {
+            socket = new Socket("localhost", 9999);
+            CloudCore core = new CloudCore(socket);
+            this.core = core;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public void sendAuth(ActionEvent actionEvent) {
