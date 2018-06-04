@@ -7,8 +7,12 @@ import java.io.File;
 
 public class FileService {
 
-    private static String globalPath; // ="D:\\Downloded_files";
+    private static String globalPath;
     private static String getUserPath;
+
+    public static String getGlobalPath(){
+        return globalPath;
+    }
 
     public static File createGlobalDir(){
 
@@ -32,8 +36,6 @@ public class FileService {
         boolean result = false;
         String userFilePath = String.format("%s%s%s", globalPath, File.separator, getUserPath);
         File file = new File(userFilePath);
-
-
         return result;
     }
 
@@ -52,16 +54,15 @@ public class FileService {
 
     public static File createUserCloudDirectory(String login){
         String userPath = String.format("%s%s%s", globalPath, File.separator, login);
-        File file = new File(userPath);//"/home/romario/files");
+        File file = new File(userPath);
         if (!file.exists()) {
             try {
                 file.mkdir();
-                System.out.println("Директория создана");
             } catch (Exception e){
                 System.out.println("Директория не поднялась");
             }
         } else {
-            System.out.println("Директория готова");
+            System.out.println("Директория пользователя готова");
         }
         getUserPath = userPath;
         return file.exists()? file : null;

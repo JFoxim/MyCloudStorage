@@ -4,6 +4,7 @@ import Services.FileService;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
 public class FilesThread implements Runnable {
     public Socket socket;
     public List<File> files;
-    public FilesThread(Socket socket, List<File> files){
+    public FilesThread(Socket socket, List<File>files){
         this.socket = socket;
         this.files = files;
     }

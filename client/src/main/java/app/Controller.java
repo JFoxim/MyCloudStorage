@@ -14,15 +14,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 public class Controller implements Initializable {
     private Socket socket;
@@ -33,6 +28,10 @@ public class Controller implements Initializable {
     //private ObservableList<String> clientsList;
     private ObservableList<FileData> fileList;
     private CloudCore core;
+    private ObjectOutputStream outputObj;
+    private ObjectInputStream inputObj;
+    private Map<String, File> localFiles = new HashMap<String, File>();
+
     FileChooser fileChooser = new FileChooser();
 
     @FXML
@@ -116,23 +115,47 @@ public class Controller implements Initializable {
                 String size = String.valueOf(file.length()/1024);
                 FileData fileData = new FileData(id.toString(), file.getName(), size);
                 fileList.add(fileData);
-                core.putFile(file);
+
+                localFiles.put(id.toString(), file);
+                try {
+                    outputObj.writeObject(file);
+                    outputObj.flush();
+                } catch (Exception e) {
+                    System.out.println("Can't send file");
+                }
+
                 //fileTable.setItems(fileList);
             }
         }
     }
 
     public void deleteFile(){
-        //fileTable.getFocusModel().getFocusedItem()
-        //core.removeFile();
+        FileData fileData = fileTable.getFocusModel().getFocusedItem();
+        try {
+            String id = fileData.getId().toString();
+            File file = localFiles.get(id);
+            outputObj.writeObject(file);
+            outputObj.flush();
+            localFiles.remove(id);
+        } catch (Exception e) {
+            System.out.println("Ошибка удаления файла");
+        }
     }
 
 
     public void autorization() {
+
+    }
+
+
+    public void connect() {
         try {
             socket = new Socket("localhost", 9999);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            outputObj = new ObjectOutputStream(socket.getOutputStream());
+            inputObj = new ObjectInputStream(socket.getInputStream());
+
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -144,6 +167,21 @@ public class Controller implements Initializable {
                                 System.out.println("авторизация прошла успешно");
                                 break;
                             }
+                        }
+
+                        while (true){
+                            outputObj.writeObject("get");
+                            outputObj.flush();
+                            Object obj = null;
+                            try {
+                                obj = inputObj.readObject();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            for (File file : (List<File>)obj){
+                                localFiles.put(UUID.randomUUID().toString(), file);
+                            }
+                            //localFiles = (List<File>) obj;
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -173,20 +211,6 @@ public class Controller implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    public void connect() {
-        autorization();
-        try {
-            socket = new Socket("localhost", 9999);
-            CloudCore core = new CloudCore(socket);
-            this.core = core;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
     }
 
     public void sendAuth(ActionEvent actionEvent) {
