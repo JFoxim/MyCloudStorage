@@ -1,4 +1,4 @@
-package app.services;
+package services;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;

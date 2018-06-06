@@ -1,16 +1,19 @@
 package Services;
 
-import app.ClientHandler;
 import dao.impl.UserDBDao;
 import models.User;
 
+import java.util.List;
 import java.util.Vector;
 
 public class UserService {
     public static boolean checkUserByLoginPass(String login, String pass) {
         UserDBDao userDBDao = new UserDBDao();
-        User user = userDBDao.getUserByLoginPass(login, pass);
-        return user != null ? true : false;
+        List<User> users = userDBDao.getUserByLoginPass(login, pass);
+        if (users.stream().count() == 0){
+            return false;
+        }else
+            return true;
     }
 
     public static String getUserIdByLogin(String login){
@@ -19,12 +22,4 @@ public class UserService {
         return user.getIdUser();
     }
 
-    public static boolean isBusyLogin(Vector<ClientHandler> clients, String login){
-        for (ClientHandler o : clients) {
-            if (o.getLogin().equals(login)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

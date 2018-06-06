@@ -30,12 +30,15 @@ public class ClientHandler {
                         if (obj instanceof AuthMessage){
                             AuthMessage am = (AuthMessage)obj;
                             if (UserService.checkUserByLoginPass(am.getLogin(), am.getPass())){
-                                this.username = am.getLogin();//"client";
+                                this.username = am.getLogin();
                                 FileService.createUserCloudDirectory(username);
                                 CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_OK);
                                 sendMsg(cm);
                                 sendFileList();
                                 break;
+                            }else {
+                                CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_WRONG);
+                                sendMsg(cm);
                             }
                         }
                     }

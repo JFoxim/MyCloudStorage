@@ -1,5 +1,6 @@
 public class CommandMessage extends AbstractMessage {
     public static final int CMD_MSG_AUTH_OK = 23792837;
+    public static final int CMD_MSG_AUTH_WRONG = 55792822;
     public static final int CMD_MSG_REQUES_FILE_DOWNLOAD = 398472948;
     public static final int CMD_MSG_REQUEST_FILES_LIST = 340274982;
     public static final int CMD_MSG_REQUEST_SERVER_DELETE_FILE = 23962746;

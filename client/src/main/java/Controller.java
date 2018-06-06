@@ -2,17 +2,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
+import services.EncriptService;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,13 +88,13 @@ public class Controller implements Initializable {
                          event.consume();
                      });
 
-                     localList.setOnDragEntered(new EventHandler<DragEvent>() {
-                         @Override
-                         public void handle(DragEvent event) {
-                             event.getDragboard().getFiles().add(new File("client/local_storage/234.txt"));
-
-                         }
-                     });
+//                     localList.setOnDragEntered(new EventHandler<DragEvent>() {
+//                         @Override
+//                         public void handle(DragEvent event) {
+//                             event.getDragboard().getFiles().add(new File("client/local_storage/234.txt"));
+//
+//                         }
+//                     });
 
                      localList.setOnDragDropped(event -> {
                          Dragboard db = event.getDragboard();
@@ -137,6 +136,8 @@ public class Controller implements Initializable {
                             if (cm.getType() == CommandMessage.CMD_MSG_AUTH_OK){
                                 setAuthorized(true);
                                 break;
+                            }else if(cm.getType() == CommandMessage.CMD_MSG_AUTH_WRONG){
+                                Platform.runLater(() -> showMessageAuthWrong());
                             }
                         }
                     }
@@ -186,6 +187,11 @@ public class Controller implements Initializable {
         }
     }
 
+    private void showMessageAuthWrong(){
+        Alert alert = new Alert(Alert.AlertType.ERROR, "Пароль или логин не верны", ButtonType.OK);
+        alert.show();
+    }
+
 
     public void btnSendFile(ActionEvent actionEvent) {
       try{
@@ -199,8 +205,10 @@ public class Controller implements Initializable {
         if (socket == null || socket.isClosed()){
              connect();
         }
+        //EncriptService.generate(
          AuthMessage am = new AuthMessage(loginField.getText(), passField.getText());
          sendMsg(am);
+         passField.setText(null);
     }
 
     public boolean isAuthorized() {

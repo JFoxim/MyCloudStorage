@@ -104,14 +104,14 @@ public class UserDBDao implements UserDao {
     }
 
     @Override
-    public User getUserByLoginPass(String login, String pass){
-        User user = new User();
+    public List<User> getUserByLoginPass(String login, String pass){
+        List<User> users = new ArrayList<>();
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Query query = session.createQuery("from User where login = :paramLogin and password= :paramPass");
+            Query query = session.createQuery("from User where login = :paramLogin and password = :paramPass");
             query.setParameter("paramLogin", login);
             query.setParameter("paramPass", pass);
-            user = (User) query.getSingleResult();
+            users = query.list();
         }
         catch (HibernateException er){
             System.out.println(er.getMessage() +" /n"+er.getStackTrace());
@@ -119,7 +119,7 @@ public class UserDBDao implements UserDao {
         finally {
             session.close();
         }
-        return user;
+        return users;
     }
 
     @Override

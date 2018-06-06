@@ -3,12 +3,14 @@ import models.File;
 import models.User;
 import org.hibernate.Session;
 import org.junit.*;
+import services.EncriptService;
 import util.HibernateUtil;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 
 @Ignore
 public class UserDaoServerTest {
@@ -43,8 +45,8 @@ public class UserDaoServerTest {
     @Test
     public void addUserTest(){
         UserDBDao userDao = new UserDBDao();
-        User user = new User("b80de869-53af-4ab5-b490-fe8a9943f167",
-                "testUser2", "1236", "testUser2@mail.ru");
+        User user = new User("b80de869-53af-4ab5-b490-fe8a9943f169",
+                "user2", EncriptService.generate("123"), "user1@mail.ru");
         Assert.assertTrue(userDao.add(user));
     }
 
@@ -63,8 +65,8 @@ public class UserDaoServerTest {
     @Test
     public void getUserByLoginPassTest(){
         UserDBDao userDBDao = new UserDBDao();
-        User user = userDBDao.getUserByLoginPass("testUser", "123");
-        Assert.assertEquals("testUser@mail.ru", user.getEmail());
+        List<User> user = userDBDao.getUserByLoginPass("testUser", "123");
+        Assert.assertEquals("testUser@mail.ru", user.get(0).getEmail());
     }
 
     @Test
