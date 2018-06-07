@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
-import services.EncriptService;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class Controller implements Initializable {
+public class MainController implements Initializable {
     @FXML
     HBox authPanel, actionPanel1, actionPanel2;
 
@@ -206,8 +206,13 @@ public class Controller implements Initializable {
              connect();
         }
         //EncriptService.generate(
-         AuthMessage am = new AuthMessage(loginField.getText(), passField.getText());
-         sendMsg(am);
+       AuthMessage am = null;
+       try {
+           am = new AuthMessage(loginField.getText(), EncriptService.run(passField.getText()));
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       sendMsg(am);
          passField.setText(null);
     }
 

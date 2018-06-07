@@ -6,14 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="authorization" />
+        <module name="authModule" />
         <module name="client" />
         <module name="common" />
         <module name="server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="authorization" target="1.8" />
+      <module name="authentication" target="1.8" />
+      <module name="authModule" target="1.8" />
       <module name="client" target="1.8" />
       <module name="common" target="1.8" />
       <module name="MyCloudStorage" target="1.8" />

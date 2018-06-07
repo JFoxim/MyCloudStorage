@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="db_storage [2]" uuid="de10d549-4e8f-4b3a-9386-c3e7e3bda293">
+    <data-source source="LOCAL" name="db_storage" uuid="60764432-6060-45e8-9c74-8cf844864459">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
@@ -20,13 +20,13 @@
         </library>
       </libraries>
     </data-source>
-    <data-source source="LOCAL" name="db_storage" uuid="a1f52f06-f952-4d41-9740-b6b927d545f0">
+    <data-source source="LOCAL" name="db_storage_" uuid="36612232-0344-499a-a9ce-293b76c8f705">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>SQLite</remarks>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:D:\Geekbrains\DZ\Java_cloud\MyCloudStorage\server\src\db_storage.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:D:\Geekbrains\DZ\Java_cloud\MyCloudStorage\server\src\db_storage_.db</jdbc-url>
       <driver-properties>
         <property name="enable_load_extension" value="true" />
       </driver-properties>

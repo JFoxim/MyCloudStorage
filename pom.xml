@@ -12,7 +12,8 @@
         <module>client</module>
         <module>server</module>
         <module>common</module>
-        <module>authorization</module>
+        <module>authentication</module>
+        <module>authModule</module>
     </modules>
 
     <properties>

@@ -1,15 +1,10 @@
 import dao.impl.UserDBDao;
 import models.File;
 import models.User;
-import org.hibernate.Session;
 import org.junit.*;
-import services.EncriptService;
-import util.HibernateUtil;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 
 @Ignore
@@ -45,8 +40,13 @@ public class UserDaoServerTest {
     @Test
     public void addUserTest(){
         UserDBDao userDao = new UserDBDao();
-        User user = new User("b80de869-53af-4ab5-b490-fe8a9943f169",
-                "user2", EncriptService.generate("123"), "user1@mail.ru");
+        User user = null;
+        try {
+            user = new User("b80de869-53af-4ab5-b590-fe8a9943f167",
+                    "user3", EncriptService.run("123"), "user3@mail.ru");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Assert.assertTrue(userDao.add(user));
     }
 

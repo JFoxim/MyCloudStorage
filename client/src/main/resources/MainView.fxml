@@ -6,7 +6,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
-<VBox fx:controller="Controller"
+<VBox fx:controller="MainController"
       xmlns:fx="http://javafx.com/fxml" alignment="center">
     <ProgressBar fx:id="operationProgress" managed="false" visible="false" maxWidth="Infinity"/>
     <HBox fx:id ="authPanel">

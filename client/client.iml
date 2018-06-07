@@ -12,6 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="common" />
-    <orderEntry type="module" module-name="authorization" />
+    <orderEntry type="module" module-name="authModule" />
   </component>
 </module>
