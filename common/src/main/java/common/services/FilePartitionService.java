@@ -1,5 +1,8 @@
+package common.services;
+
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
+import common.messages.FileMessage;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,7 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
-public class FilePartitionWorker {
+public class FilePartitionService {
 
     private static final int PART_SIZE = 4;
 

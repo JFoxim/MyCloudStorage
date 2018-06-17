@@ -1,9 +1,6 @@
-package Services;
+package server.services;
 
 import dao.impl.ServerSettingsDBDao;
-import models.ServerSettings;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SettingsService {
 

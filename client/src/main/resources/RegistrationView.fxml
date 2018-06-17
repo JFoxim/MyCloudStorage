@@ -7,27 +7,31 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AuthController">
+<VBox alignment="center" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RegistrationController">
          <TextField fx:id="loginField" promptText="Логин" HBox.hgrow="ALWAYS">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>
-      <VBox.margin>
-         <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
-      </VBox.margin></TextField>
-            <PasswordField fx:id="passField" promptText="Пароль" HBox.hgrow="ALWAYS">
+         <VBox.margin>
+           <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
+         </VBox.margin></TextField>
+        <PasswordField fx:id="passField" promptText="Пароль" HBox.hgrow="ALWAYS">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>
       <VBox.margin>
-         <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+         <Insets bottom="0.0" left="10.0" right="10.0" top="5.0" />
       </VBox.margin></PasswordField>
+      <TextField fx:id="emailField" promptText="email" HBox.hgrow="ALWAYS">
+        <HBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        </HBox.margin>
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="15.0" />
+        </VBox.margin></TextField>
         <HBox fx:id="btnPanel" prefHeight="37.0" prefWidth="334.0">
-            <Button fx:id="btnLogin" onAction="#tryToAuthorize" prefHeight="25.0" prefWidth="156.0" text="Войти" HBox.hgrow="ALWAYS">
-         <HBox.margin>
-            <Insets bottom="10.0" left="10.0" top="5.0" />
-         </HBox.margin></Button>
-            <Button fx:id="btnRegistration" onAction="#openRegistrationWindow" prefHeight="25.0" prefWidth="156.0" text="Регистрация" HBox.hgrow="ALWAYS">
+
+            <Button fx:id="btnСonfirm" onAction="#tryToСonfirm" prefHeight="25.0" prefWidth="320.0" text="Подтвердить" HBox.hgrow="ALWAYS">
          <HBox.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
          </HBox.margin></Button>

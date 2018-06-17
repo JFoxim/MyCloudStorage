@@ -2,6 +2,7 @@ import dao.impl.UserDBDao;
 import models.File;
 import models.User;
 import org.junit.*;
+import auth.services.EncriptService;
 
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class UserDaoServerTest {
         User user = null;
         try {
             user = new User("b80de869-53af-4ab5-b590-fe8a9943f167",
-                    "user3", EncriptService.run("123"), "user3@mail.ru");
+                    "user", EncriptService.encript("123"), "user@mail.ru");
         } catch (Exception e) {
             e.printStackTrace();
         }

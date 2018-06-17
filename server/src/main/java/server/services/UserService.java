@@ -1,10 +1,9 @@
-package Services;
+package server.services;
 
 import dao.impl.UserDBDao;
 import models.User;
 
 import java.util.List;
-import java.util.Vector;
 
 public class UserService {
     public static boolean checkUserByLoginPass(String login, String pass) {
@@ -20,6 +19,12 @@ public class UserService {
         UserDBDao userDBDao = new UserDBDao();
         User user = userDBDao.getByLogin(login);
         return user.getIdUser();
+    }
+
+    public static boolean createUser(String login, String pass, String email) {
+        User user = new User(login, pass, email);
+        UserDBDao userDBDao = new UserDBDao();
+        return userDBDao.add(user);
     }
 
 }

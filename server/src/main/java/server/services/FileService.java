@@ -1,7 +1,4 @@
-package Services;
-
-import dao.UserDao;
-import dao.impl.UserDBDao;
+package server.services;
 
 import java.io.File;
 

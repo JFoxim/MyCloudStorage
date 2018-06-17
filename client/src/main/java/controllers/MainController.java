@@ -1,3 +1,5 @@
+package controllers;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,8 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
-
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,16 +25,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import model.NetCore;
+import common.messages.*;
+import common.services.FilePartitionService;
+
 
 public class MainController implements Initializable {
     @FXML
-    HBox authPanel, actionPanel1, actionPanel2;
-
-    @FXML
-    private TextField loginField;
-
-    @FXML
-    private PasswordField passField;
+    HBox  actionPanel1, actionPanel2;
 
     @FXML
     ListView<File> cloudList, localList;
@@ -45,18 +43,21 @@ public class MainController implements Initializable {
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private boolean authorized;
+    private NetCore netCore;
     private ObservableList<File> cloudFilesList;
     private ObservableList<File> localFilesList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setAuthorized(false);
         cloudFilesList = FXCollections.observableArrayList();
         cloudList.setItems(cloudFilesList);
         localFilesList = FXCollections.observableArrayList();
         localList.setItems(localFilesList);
+        socket = NetCore.getSocket();
+        out = NetCore.getOut();
+        in = NetCore.getIn();
         refreshLocalList();
+        connect();
 
         localList.setCellFactory(new Callback<ListView<File>, ListCell<File>>() {
             @Override
@@ -124,41 +125,24 @@ public class MainController implements Initializable {
 
     public void connect(){
         try {
-            socket = new Socket("localhost", 8189);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
             Thread t = new Thread(() -> {
                 try {
                     while (true) {
                         Object obj = in.readObject();
-                        if (obj instanceof CommandMessage) {
-                            CommandMessage cm = (CommandMessage)obj;
-                            if (cm.getType() == CommandMessage.CMD_MSG_AUTH_OK){
-                                setAuthorized(true);
-                                break;
-                            }else if(cm.getType() == CommandMessage.CMD_MSG_AUTH_WRONG){
-                                Platform.runLater(() -> showMessageAuthWrong());
-                            }
-                        }
-                    }
-                    while (true){
-                        Object obj = in.readObject();
-                        if(obj instanceof FileListMessage){
-                            FileListMessage flm = (FileListMessage)obj;
+                        if (obj instanceof FileListMessage) {
+                            FileListMessage flm = (FileListMessage) obj;
                             Platform.runLater(() -> {
                                 cloudFilesList.clear();
                                 cloudFilesList.addAll(flm.getFiles());
                             });
                         }
-                        if (obj instanceof FileMessage){
-                            FileMessage fm =(FileMessage) obj;
-                            FilePartitionWorker.receiveFile(in, "client/local_storage", fm, operationProgress);
-//                            Files.write(Paths.get("client/local_storage/"
-//                                    + fm.getFilename()), fm.getData(), StandardOpenOption.CREATE);
+                        if (obj instanceof FileMessage) {
+                            FileMessage fm = (FileMessage) obj;
+                            FilePartitionService.receiveFile(in, "client/local_storage", fm, operationProgress);
                             Platform.runLater(() -> refreshLocalList());
                         }
                     }
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -187,48 +171,14 @@ public class MainController implements Initializable {
         }
     }
 
-    private void showMessageAuthWrong(){
-        Alert alert = new Alert(Alert.AlertType.ERROR, "Пароль или логин не верны", ButtonType.OK);
-        alert.show();
-    }
-
-
     public void btnSendFile(ActionEvent actionEvent) {
       try{
-          FilePartitionWorker.sendFile(Paths.get(localList.getSelectionModel().getSelectedItem().getAbsolutePath()), out, operationProgress);
+          FilePartitionService.sendFile(Paths.get(localList.getSelectionModel().getSelectedItem().getAbsolutePath()), out, operationProgress);
       }catch (Exception e){
           e.printStackTrace();
       }
     }
 
-   public void tryToAuthorize(ActionEvent actionEvent) {
-        if (socket == null || socket.isClosed()){
-             connect();
-        }
-        //EncriptService.generate(
-       AuthMessage am = null;
-       try {
-           am = new AuthMessage(loginField.getText(), EncriptService.run(passField.getText()));
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-       sendMsg(am);
-         passField.setText(null);
-    }
-
-    public boolean isAuthorized() {
-        return authorized;
-    }
-
-    public void setAuthorized(boolean authorized) {
-        this.authorized = authorized;
-        authPanel.setManaged(!this.authorized);
-        authPanel.setVisible(!this.authorized);
-        actionPanel1.setManaged(this.authorized);
-        actionPanel1.setVisible(this.authorized);
-        actionPanel2.setManaged(this.authorized);
-        actionPanel2.setVisible(this.authorized);
-    }
 
     public void sendMsg(AbstractMessage am) {
         try{
@@ -247,6 +197,8 @@ public class MainController implements Initializable {
         }
         else{
            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Выберите файл", ButtonType.OK);
+           alert.setTitle("Внимание");
+           alert.setHeaderText(null);
            alert.show();
         }
     }

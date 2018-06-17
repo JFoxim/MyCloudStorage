@@ -1,5 +1,7 @@
-import Services.FileService;
-import Services.UserService;
+import common.messages.*;
+import common.services.FilePartitionService;
+import server.services.FileService;
+import server.services.UserService;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,41 @@ public class ClientHandler {
    private ObjectInputStream in;
    private String username;
 
+    public boolean registerUserService(Object obj){
+        boolean result = false;
+        RegistMessage rm = (RegistMessage)obj;
+        int cmId =0;
+        if (UserService.createUser(rm.getLogin(), rm.getPass(), rm.getEmail())){
+            FileService.createUserCloudDirectory(username);
+            cmId = CommandMessage.CMD_MSG_USER_CREATE_OK;
+            sendFileList();
+            result = true;
+        }else {
+            cmId = CommandMessage.CMD_MSG_USER_CREATE_WRONG;
+        }
+        CommandMessage cm = new CommandMessage(cmId);
+        sendMsg(cm);
+        return result;
+    }
+
+    public boolean authUserService(Object obj){
+        boolean result = false;
+        AuthMessage am = (AuthMessage)obj;
+        int cmId =0;
+        if (UserService.checkUserByLoginPass(am.getLogin(), am.getPass())){
+            this.username = am.getLogin();
+            FileService.createUserCloudDirectory(username);
+            CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_OK);
+            sendMsg(cm);
+            sendFileList();
+            result = true;
+        }else {
+            CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_WRONG);
+            sendMsg(cm);
+        }
+        return result;
+    }
+
     public ClientHandler(Server server, Socket socket) {
         try {
             this.server = server;
@@ -28,18 +65,12 @@ public class ClientHandler {
                     while (true) {
                         Object obj = in.readObject();
                         if (obj instanceof AuthMessage){
-                            AuthMessage am = (AuthMessage)obj;
-                            if (UserService.checkUserByLoginPass(am.getLogin(), am.getPass())){
-                                this.username = am.getLogin();
-                                FileService.createUserCloudDirectory(username);
-                                CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_OK);
-                                sendMsg(cm);
-                                sendFileList();
+                            if (authUserService(obj))
                                 break;
-                            }else {
-                                CommandMessage cm = new CommandMessage(CommandMessage.CMD_MSG_AUTH_WRONG);
-                                sendMsg(cm);
-                            }
+                        }
+
+                        if (obj instanceof RegistMessage){
+                            registerUserService(obj);
                         }
                     }
                     while (true){
@@ -47,7 +78,7 @@ public class ClientHandler {
                         if (obj instanceof AbstractMessage){
                             if (obj instanceof FileMessage){
                                 FileMessage fm =(FileMessage) obj;
-                                FilePartitionWorker.receiveFile(in, FileService.getGlobalPath() + username, fm, null);
+                                FilePartitionService.receiveFile(in, FileService.getGlobalPath() + username, fm, null);
                                 sendFileList();
                             }
                         }
@@ -55,7 +86,7 @@ public class ClientHandler {
                             CommandMessage cm =(CommandMessage)obj;
                             if(cm.getType() == CommandMessage.CMD_MSG_REQUES_FILE_DOWNLOAD){
                                 try{
-                                    FilePartitionWorker.sendFile(Paths.get(((File)cm.getAttachment()[0]).getAbsolutePath()), out, null);
+                                    FilePartitionService.sendFile(Paths.get(((File)cm.getAttachment()[0]).getAbsolutePath()), out, null);
                                   }catch (Exception e){
                                     e.printStackTrace();
                                 }
